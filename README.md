@@ -2,11 +2,21 @@
 
 ![Mineradio 暗场启动页](./docs/assets/readme/cinema-beat-smoke.png)
 
+## 关于本仓库（二创说明）
+
+本仓库是 `whathill111` 基于原作者 [`XxHuberrr`](https://github.com/XxHuberrr) 的 [Mineradio](https://github.com/XxHuberrr/Mineradio) 制作的**二创发布版**，遵循 GPL-3.0。
+
+本版本由 `whathill111` 整理用于公开分发：
+
+- 移除个人自用内容，只保留可公开分发的素材与代码
+- 提供可公开分发的仓库与 Windows 安装包（见 [Releases](https://github.com/whathill111/Mineradio/releases)）
+- 下载入口与使用说明指向本仓库的 GitHub Release
+
+**原作者署名与 GPL-3.0 授权完整保留**。Mineradio 原项目由 `XxHuberrr` 设计与打造，著作权归原作者所有。
+
 Mineradio 是一款 Windows 桌面沉浸式音乐播放器，把搜索播放、歌词舞台、粒子视觉、3D 歌单架和完整桌面模式组合成一个更接近现场感的私人音乐空间。
 
 ## 立即下载 Windows 安装包
-
-> 本仓库为 `whathill111` 基于原作者 [`XxHuberrr/Mineradio`](https://github.com/XxHuberrr/Mineradio) 的改造发布版（GPL-3.0），仅用于个人学习与本地体验。原作者署名与授权见文末。
 
 安装包从本仓库的 GitHub Release 下载。
 
