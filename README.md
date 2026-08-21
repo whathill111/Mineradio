@@ -6,7 +6,13 @@
 
 本仓库是 `whathill111` 基于原作者 [`XxHuberrr`](https://github.com/XxHuberrr) 的 [Mineradio](https://github.com/XxHuberrr/Mineradio) 制作的**二创发布版**，遵循 GPL-3.0。
 
-本版本由 `whathill111` 整理用于公开分发：
+由 `whathill111` 新增的二创内容：
+
+- **今日计划**：左上角紧凑的每日计划板块，按本地日期保存待办、勾选完成
+- **伴学宠物**：可导入自制宠物包，宠物根据计划与播放状态切换动画并给出本地激励语
+- **自定义壁纸**：除原版的 Wallpaper Engine 视觉外，支持导入任意本地图片作为背景
+
+此外由 `whathill111` 整理用于公开分发：
 
 - 移除个人自用内容，只保留可公开分发的素材与代码
 - 提供可公开分发的仓库与 Windows 安装包（见 [Releases](https://github.com/whathill111/Mineradio/releases)）
