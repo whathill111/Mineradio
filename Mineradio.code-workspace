@@ -1,0 +1,11 @@
+{
+  "folders": [
+    {
+      "name": "Mineradio",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "terminal.integrated.cwd": "${workspaceFolder}"
+  }
+}

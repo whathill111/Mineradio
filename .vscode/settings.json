@@ -1,0 +1,25 @@
+{
+  "terminal.integrated.cwd": "${workspaceFolder}",
+  "terminal.integrated.env.windows": {
+    "MINERADIO_WORKSPACE_ROOT": "${workspaceFolder}",
+    "MINERADIO_WORKSPACE_STATE_DIR": "${workspaceFolder}\\.workspace",
+    "MINERADIO_HOST_APPDATA": "${env:APPDATA}",
+    "TEMP": "${workspaceFolder}\\.workspace\\temp",
+    "TMP": "${workspaceFolder}\\.workspace\\temp",
+    "TMPDIR": "${workspaceFolder}\\.workspace\\temp",
+    "APPDATA": "${workspaceFolder}\\.workspace\\profile\\Roaming",
+    "LOCALAPPDATA": "${workspaceFolder}\\.workspace\\profile\\Local",
+    "HOME": "${workspaceFolder}\\.workspace\\home",
+    "XDG_CACHE_HOME": "${workspaceFolder}\\.workspace\\xdg-cache",
+    "XDG_DATA_HOME": "${workspaceFolder}\\.workspace\\xdg-data",
+    "NPM_CONFIG_CACHE": "${workspaceFolder}\\.workspace\\npm-cache",
+    "NPM_CONFIG_USERCONFIG": "${workspaceFolder}\\.npmrc",
+    "npm_config_store_dir": "${workspaceFolder}\\.workspace\\pnpm-store",
+    "PNPM_HOME": "${workspaceFolder}\\.workspace\\pnpm-home",
+    "ELECTRON_CACHE": "${workspaceFolder}\\.workspace\\electron-cache",
+    "ELECTRON_BUILDER_CACHE": "${workspaceFolder}\\.workspace\\electron-builder-cache",
+    "PLAYWRIGHT_BROWSERS_PATH": "${workspaceFolder}\\.workspace\\playwright-browsers",
+    "PIP_CACHE_DIR": "${workspaceFolder}\\.workspace\\pip-cache",
+    "UV_CACHE_DIR": "${workspaceFolder}\\.workspace\\uv-cache"
+  }
+}

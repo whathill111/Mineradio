@@ -1,0 +1,46 @@
+@echo off
+rem Project-local runtime, profile, cache, and temporary directories.
+rem This script deliberately has no SETLOCAL so callers inherit the values.
+
+if not defined APP_DIR set "APP_DIR=%~dp0..\"
+for %%I in ("%APP_DIR%.") do set "APP_DIR=%%~fI\"
+
+set "MINERADIO_WORKSPACE_ROOT=%APP_DIR%"
+set "MINERADIO_WORKSPACE_STATE_DIR=%APP_DIR%.workspace"
+set "WORKSPACE_TEMP=%MINERADIO_WORKSPACE_STATE_DIR%\temp"
+if not defined MINERADIO_HOST_APPDATA set "MINERADIO_HOST_APPDATA=%APPDATA%"
+
+set "TEMP=%WORKSPACE_TEMP%"
+set "TMP=%WORKSPACE_TEMP%"
+set "TMPDIR=%WORKSPACE_TEMP%"
+set "APPDATA=%MINERADIO_WORKSPACE_STATE_DIR%\profile\Roaming"
+set "LOCALAPPDATA=%MINERADIO_WORKSPACE_STATE_DIR%\profile\Local"
+set "HOME=%MINERADIO_WORKSPACE_STATE_DIR%\home"
+set "XDG_CACHE_HOME=%MINERADIO_WORKSPACE_STATE_DIR%\xdg-cache"
+set "XDG_DATA_HOME=%MINERADIO_WORKSPACE_STATE_DIR%\xdg-data"
+
+set "NPM_CONFIG_CACHE=%MINERADIO_WORKSPACE_STATE_DIR%\npm-cache"
+set "NPM_CONFIG_USERCONFIG=%APP_DIR%.npmrc"
+set "npm_config_store_dir=%MINERADIO_WORKSPACE_STATE_DIR%\pnpm-store"
+set "PNPM_HOME=%MINERADIO_WORKSPACE_STATE_DIR%\pnpm-home"
+set "YARN_CACHE_FOLDER=%MINERADIO_WORKSPACE_STATE_DIR%\yarn-cache"
+set "ELECTRON_CACHE=%MINERADIO_WORKSPACE_STATE_DIR%\electron-cache"
+set "ELECTRON_BUILDER_CACHE=%MINERADIO_WORKSPACE_STATE_DIR%\electron-builder-cache"
+set "PLAYWRIGHT_BROWSERS_PATH=%MINERADIO_WORKSPACE_STATE_DIR%\playwright-browsers"
+set "PIP_CACHE_DIR=%MINERADIO_WORKSPACE_STATE_DIR%\pip-cache"
+set "UV_CACHE_DIR=%MINERADIO_WORKSPACE_STATE_DIR%\uv-cache"
+set "NODE_REPL_HISTORY=%MINERADIO_WORKSPACE_STATE_DIR%\node_repl_history"
+
+for %%D in (
+  "%WORKSPACE_TEMP%"
+  "%APPDATA%"
+  "%LOCALAPPDATA%"
+  "%HOME%"
+  "%NPM_CONFIG_CACHE%"
+  "%MINERADIO_WORKSPACE_STATE_DIR%\cache"
+  "%MINERADIO_WORKSPACE_STATE_DIR%\user-data"
+  "%MINERADIO_WORKSPACE_STATE_DIR%\logs"
+  "%MINERADIO_WORKSPACE_STATE_DIR%\crash-dumps"
+) do if not exist "%%~D" mkdir "%%~D" >nul 2>nul
+
+exit /b 0
