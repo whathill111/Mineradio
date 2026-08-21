@@ -32,16 +32,6 @@ Mineradio 是一款 Windows 桌面沉浸式音乐播放器，把搜索播放、�
 2. Windows SmartScreen 弹出蓝色拦截窗口时，点 `更多信息`，再点 `仍要运行`。
 3. 如果杀毒软件明确显示木马、高危或已经隔离，不要强行运行；删除该文件后重新从本仓库 GitHub Release 下载，仍然异常请带截图反馈给作者。
 
-## 作者支持
-
-如果 Mineradio 陪你多听了一首歌，也欢迎请作者一杯咖啡。
-
-[查看完整支持页](./docs/SUPPORT.md)
-
-![Mineradio 作者支持渠道](./docs/assets/support/mineradio-author-support-poster.png)
-
-Mineradio 2.1 进一步优化了壁纸与全屏体验，并提升了登录、账号、本地曲库和长时间运行的稳定性。
-
 ## 当前版本
 
 当前版本：`2.1.1`
@@ -113,12 +103,6 @@ Mineradio 不是网易云音乐、QQ 音乐或腾讯音乐娱乐集团的官方�
 
 更多说明见 [PRIVACY.md](./PRIVACY.md)。
 
-## 致谢
-
-Mineradio 由 XxHuberrr 主要设计与打造。emily 作为早期视觉底层想法与 `emily` 视觉预设改进方向的共创者和灵感来源之一，特此感谢。
-
-同时感谢小天才e宝、应春日、锋将军、軌跡、林中、骊、风痕、花椰菜🥦在早期体验、测试反馈和发布准备中的帮助。
-
 ## 版权与授权
 
 Copyright (C) 2026 XxHuberrr.
@@ -127,4 +111,4 @@ Copyright (C) 2026 XxHuberrr.
 
 MR Logo、Mineradio 名称、界面视觉设计与原创视觉表达归作者所有；第三方依赖和第三方服务分别遵循其各自授权与服务条款。
 
-> 本仓库由 `whathill111` 基于原作者 `XxHuberrr` 的 Mineradio 改造发布，保留全部原作者署名与 GPL-3.0 授权。仓库内不含任何原作者未公开的私有素材。
+> 本仓库由 `whathill111` 基于原作者 `XxHuberrr` 的 Mineradio 改造发布，保留全部原作者署名与 GPL-3.0 授权。仓库不含个人自用内容，仅保留可公开分发的素材与代码。
