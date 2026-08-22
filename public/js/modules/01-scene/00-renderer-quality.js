@@ -177,7 +177,38 @@ function getRenderLoadTier() {
   if (cssPixels >= 3200000 || renderPixels >= 3600000) return 1;
   return 0;
 }
-var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+function readGpuPowerPreferenceQuality() {
+  // 渲染器创建早于视觉设置持久化模块，画质档需直接读自动存档（本地 + 桌面磁盘镜像）。
+  var rawQuality = null;
+  try {
+    var rawText = localStorage.getItem(CURRENT_FX_AUTOSAVE_STORE_KEY);
+    if (rawText) {
+      var parsed = JSON.parse(rawText);
+      if (parsed && parsed.performanceQuality) rawQuality = String(parsed.performanceQuality);
+    }
+  } catch (storageError) { }
+  if (!rawQuality) {
+    try {
+      var bridge = window.desktopWindow;
+      if (bridge && typeof bridge.readCurrentFxAutosaveSync === 'function') {
+        var result = bridge.readCurrentFxAutosaveSync();
+        var payload = result && result.payload;
+        if (payload && payload.performanceQuality) rawQuality = String(payload.performanceQuality);
+      }
+    } catch (bridgeError) { }
+  }
+  return normalizePerformanceQuality(rawQuality || (fx && fx.performanceQuality));
+}
+function renderGpuPowerPreference() {
+  // 默认请求省电 GPU（混合显卡机器上走核显，单显卡机器无影响）；
+  // 仅用户显式选择的高画质档才请求独显。
+  var quality = readGpuPowerPreferenceQuality();
+  var profile = (typeof runtimeHardwareProfile !== 'undefined' && runtimeHardwareProfile) ? runtimeHardwareProfile : null;
+  if (quality === 'ultra') return 'high-performance';
+  if (quality === 'high' && !(profile && profile.lowSpec)) return 'high-performance';
+  return 'low-power';
+}
+var renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: renderGpuPowerPreference() });
 renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(getRenderPixelRatio());
 renderer.setSize(innerWidth, innerHeight);

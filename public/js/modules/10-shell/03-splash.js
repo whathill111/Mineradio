@@ -60,7 +60,7 @@ function initMineradioSplashWebgl(canvas) {
       stencil: false,
       premultipliedAlpha: false,
       preserveDrawingBuffer: false,
-      powerPreference: 'high-performance'
+      powerPreference: (typeof renderGpuPowerPreference === 'function') ? renderGpuPowerPreference() : 'default'
     }) || canvas.getContext('experimental-webgl');
   } catch (e) {
     gl = null;
