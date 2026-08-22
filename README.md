@@ -26,13 +26,13 @@ Mineradio 是一款 Windows 桌面沉浸式音乐播放器，把搜索播放、�
 
 安装包从本仓库的 GitHub Release 下载。
 
-[下载 Mineradio 2.1.2 — GitHub Release](https://github.com/whathill111/Mineradio/releases/tag/v2.1.2)
+[下载 Mineradio 2.1.3 — GitHub Release](https://github.com/whathill111/Mineradio/releases/tag/v2.1.3)
 
-安装时只需要下载并运行 `Mineradio-2.1.2-Setup.exe`。不要把 `.blockmap`、`latest.yml` 或 `win-unpacked` 当成正式安装包。
+安装时只需要下载并运行 `Mineradio-2.1.3-Setup.exe`。不要把 `.blockmap`、`latest.yml` 或 `win-unpacked` 当成正式安装包。
 
 ## 下载或安装被拦截怎么办
 
-小众 Electron 桌面软件、未签名安装包有时会被浏览器、Windows Defender 或 SmartScreen 提示风险。请先确认安装包来自本仓库的 GitHub Release，文件名是 `Mineradio-2.1.2-Setup.exe`。
+小众 Electron 桌面软件、未签名安装包有时会被浏览器、Windows Defender 或 SmartScreen 提示风险。请先确认安装包来自本仓库的 GitHub Release，文件名是 `Mineradio-2.1.3-Setup.exe`。
 
 1. 浏览器下载栏提示风险时，打开下载列表，点这条下载右侧的 `...` 三个点，选择 `保留` / `仍要保留` / `显示更多` 后继续保留。
 2. Windows SmartScreen 弹出蓝色拦截窗口时，点 `更多信息`，再点 `仍要运行`。
@@ -40,11 +40,11 @@ Mineradio 是一款 Windows 桌面沉浸式音乐播放器，把搜索播放、�
 
 ## 当前版本
 
-当前版本：`2.1.2`
+当前版本：`2.1.3`
 
-状态：Mineradio 2.1.2 正式版。
+状态：Mineradio 2.1.3 正式版。
 
-> 安全提示：`v1.0.10` 及更早旧安装包不再建议继续安装或传播。请使用本仓库 GitHub Release 提供的 `Mineradio-2.1.2-Setup.exe`。
+> 安全提示：`v1.0.10` 及更早旧安装包不再建议继续安装或传播。请使用本仓库 GitHub Release 提供的 `Mineradio-2.1.3-Setup.exe`。
 
 ## 核心特性
 
@@ -64,13 +64,13 @@ Mineradio 是一款 Windows 桌面沉浸式音乐播放器，把搜索播放、�
 - 左上角紧凑「今日计划」：按本地日期保存待办、勾选完成并联动伴学宠物
 - 无需会员的「开放音频」来源：只接入 Internet Archive 中带明确公开许可的音频，并显示来源与许可
 - 可导入本地图片或视频作为背景；支持关闭、电影漂移和音乐律动三种轻量动态模式
-- 可导入自制伴学宠物包；宠物会根据计划与播放状态切换动画并给出本地激励语
+- 可导入自制伴学宠物包；宠物会根据计划与播放状态切换动画并给出本地激励语，支持按住拖动换位
 
 ## 使用说明
 
 Windows 用户可以从本仓库的 GitHub Release 下载安装包。
 
-正式分发以 `Mineradio-2.1.2-Setup.exe` 为准，不建议直接使用 `win-unpacked` 目录。安装包会创建桌面快捷方式。
+正式分发以 `Mineradio-2.1.3-Setup.exe` 为准，不建议直接使用 `win-unpacked` 目录。安装包会创建桌面快捷方式。
 
 ### 二创功能使用
 
@@ -79,7 +79,7 @@ Windows 用户可以从本仓库的 GitHub Release 下载安装包。
 - 开放音频不要求登录会员。搜索结果会标记 `OA`，播放详情会显示 Archive.org 来源和许可链接；只使用应用能够重新确认许可和公开音频文件的条目。
 - 伴学宠物在「今日计划 → 伴学宠物」中导入 `pet.json + spritesheet.webp/png`，完整格式和自制说明见 [docs/STUDY_PET.md](./docs/STUDY_PET.md)。
 
-已经安装过旧版本的用户可直接运行 `Mineradio-2.1.2-Setup.exe` 完成更新。软件内更新入口只会打开浏览器下载页，不会在客户端内下载或应用补丁。
+已经安装过旧版本的用户可直接运行 `Mineradio-2.1.3-Setup.exe` 完成更新。软件内更新入口只会打开浏览器下载页，不会在客户端内下载或应用补丁。
 
 ## 开发运行
 
