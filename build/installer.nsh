@@ -86,6 +86,9 @@
     FileWrite $0 "appId=${MINERADIO_MARKER_APP_ID}$\r$\n"
     FileClose $0
   ${EndIf}
+  ; 双显卡笔记本默认选省电 GPU（核显），避免独显被全程点亮发热；
+  ; 用户可在 Windows 设置 → 系统 → 屏幕 → 显示卡 中改回“让 Windows 决定”。
+  WriteRegStr HKCU "Software\Microsoft\DirectX\UserGpuPreferences" "$INSTDIR\${PRODUCT_FILENAME}.exe" "GpuPreference=1;"
 !macroend
 
 !macro customRemoveFiles
@@ -937,6 +940,10 @@ FunctionEnd
 !ifdef BUILD_UNINSTALLER
 !macro customUnInit
   Call un.MineradioValidateUninstallDir
+!macroend
+
+!macro customUnInstall
+  DeleteRegValue HKCU "Software\Microsoft\DirectX\UserGpuPreferences" "$INSTDIR\${PRODUCT_FILENAME}.exe"
 !macroend
 
 Function un.MineradioInstallDirLooksOwned
