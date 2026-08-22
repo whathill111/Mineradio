@@ -1190,13 +1190,18 @@ function stageLyricPersistentNextTextRunwayRange(data, targetIndex, rowMap) {
   rowMap = rowMap || stageLyricPersistentResidentRowMap(data);
   var nextIndex = -1;
   var previousIndex = -1;
-  for (var next = targetIndex; next <= last; next++) {
+  // The runway rebuild scan must stay inside the eviction window kept by
+  // trimStageLyricPersistentTextRunwayRows, otherwise released rows are
+  // immediately rebuilt and the byte budget never converges.
+  var scanLast = Math.min(last, targetIndex + STAGE_LYRIC_TEXT_RUNWAY_SCAN_AHEAD);
+  var scanFirst = Math.max(0, targetIndex - STAGE_LYRIC_TEXT_RUNWAY_SCAN_BEHIND);
+  for (var next = targetIndex; next <= scanLast; next++) {
     if (lyricLineDisplayTextAt(next) && !stageLyricPersistentLineRowsResident(data, next, rowMap)) {
       nextIndex = next;
       break;
     }
   }
-  for (var previous = targetIndex - 1; previous >= 0; previous--) {
+  for (var previous = targetIndex - 1; previous >= scanFirst; previous--) {
     if (lyricLineDisplayTextAt(previous) && !stageLyricPersistentLineRowsResident(data, previous, rowMap)) {
       previousIndex = previous;
       break;
@@ -1335,6 +1340,87 @@ function ensureStageLyricPersistentTrackRows(mesh, targetIndex, options) {
   });
 }
 
+// Text-runway residency budget.  The whole-song runway keeps the continuous
+// scroll feel, but every resident row holds a multi-MB texture in GPU memory,
+// so long songs need a sliding window plus a shared byte budget.  Keep/scan
+// windows overlap deliberately (scan < keep) so boundary rows are not evicted
+// and rebuilt every target change.
+var STAGE_LYRIC_TEXT_RUNWAY_KEEP_BEHIND = 72;
+var STAGE_LYRIC_TEXT_RUNWAY_KEEP_AHEAD = 160;
+var STAGE_LYRIC_TEXT_RUNWAY_SCAN_AHEAD = 128;
+var STAGE_LYRIC_TEXT_RUNWAY_SCAN_BEHIND = 48;
+var STAGE_LYRIC_TEXT_RUNWAY_BUDGET_BYTES = 176 * 1024 * 1024;
+var STAGE_LYRIC_TEXT_RUNWAY_BUDGET_BYTES_LOW_SPEC = 112 * 1024 * 1024;
+function stageLyricTextRunwayRowBytes(row) {
+  var mask = row && row.lineMask;
+  if (!mask) return 0;
+  var w = Number(mask.width) || 0;
+  var h = Number(mask.height) || 0;
+  if (w > 0 && h > 0) return w * h * 4;
+  return 3072 * 256 * 4;
+}
+function trimStageLyricPersistentTextRunwayRows(data, targetIndex, interactive) {
+  if (interactive) return 0;
+  if (!data || !Array.isArray(data.rowLayers) || data.rowLayers.length <= 1) return 0;
+  var budget = (typeof runtimeHardwareProfile !== 'undefined' && runtimeHardwareProfile && runtimeHardwareProfile.lowSpec)
+    ? STAGE_LYRIC_TEXT_RUNWAY_BUDGET_BYTES_LOW_SPEC
+    : STAGE_LYRIC_TEXT_RUNWAY_BUDGET_BYTES;
+  var hardStart = targetIndex - STAGE_LYRIC_TEXT_RUNWAY_KEEP_BEHIND;
+  var hardEnd = targetIndex + STAGE_LYRIC_TEXT_RUNWAY_KEEP_AHEAD;
+  var total = 0;
+  var evicted = 0;
+  var kept = [];
+  var candidates = [];
+  for (var i = 0; i < data.rowLayers.length; i++) {
+    var row = data.rowLayers[i];
+    if (!row) continue;
+    var lineIndex = row.isTranslation
+      ? (row.parentIndex != null ? Number(row.parentIndex) : Number(row.lineIndex))
+      : Number(row.lineIndex);
+    var roundedLineIndex = isFinite(lineIndex) ? Math.round(lineIndex) : null;
+    var bytes = stageLyricTextRunwayRowBytes(row);
+    total += bytes;
+    if (roundedLineIndex == null || roundedLineIndex === targetIndex) {
+      kept.push(row);
+      continue;
+    }
+    if (roundedLineIndex < hardStart || roundedLineIndex > hardEnd) {
+      disposeStageLyricResidentRow(row);
+      total -= bytes;
+      evicted += 1;
+      continue;
+    }
+    kept.push(row);
+    candidates.push({
+      row: row,
+      bytes: bytes,
+      distance: Math.abs(roundedLineIndex - targetIndex),
+      behind: roundedLineIndex < targetIndex
+    });
+  }
+  if (total > budget && candidates.length) {
+    // Spend the budget in playback direction: rows already sung are released
+    // first (farthest behind first), then the farthest rows ahead.
+    candidates.sort(function (a, b) {
+      if (a.behind !== b.behind) return a.behind ? -1 : 1;
+      return b.distance - a.distance;
+    });
+    for (var ci = 0; ci < candidates.length && total > budget; ci++) {
+      var candidate = candidates[ci];
+      disposeStageLyricResidentRow(candidate.row);
+      var keptIndex = kept.indexOf(candidate.row);
+      if (keptIndex >= 0) kept.splice(keptIndex, 1);
+      total -= candidate.bytes;
+      evicted += 1;
+    }
+  }
+  if (evicted > 0) {
+    data.rowLayers = kept;
+    data.trackTextRunwayComplete = false;
+  }
+  return evicted;
+}
+
 function trimStageLyricPersistentTrackRows(mesh, targetIndex, options) {
   options = options || {};
   var data = mesh && mesh.userData && mesh.userData.lyric;
@@ -1388,8 +1474,9 @@ function trimStageLyricPersistentTrackRows(mesh, targetIndex, options) {
       releasedEffects += 1;
     }
   }
+  var releasedRows = trimStageLyricPersistentTextRunwayRows(data, targetIndex, interactive);
   updateStageLyricPersistentResidentBounds(data);
-  return releasedEffects > 0;
+  return releasedEffects > 0 || releasedRows > 0;
 }
 
 function initializeStageLyricPersistentTrack(mesh, payload) {
