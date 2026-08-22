@@ -346,14 +346,21 @@ var temporaryTimer = 0;
   function readPrefs() {
     try {
       var parsed = JSON.parse(localStorage.getItem(PREF_KEY) || '{}') || {};
-      return { currentId: String(parsed.currentId || ''), hidden: parsed.hidden === true };
+      var position = null;
+      if (parsed.position && isFinite(Number(parsed.position.x)) && isFinite(Number(parsed.position.y))) {
+        position = {
+          x: Math.max(0, Math.min(1, Number(parsed.position.x))),
+          y: Math.max(0, Math.min(1, Number(parsed.position.y)))
+        };
+      }
+      return { currentId: String(parsed.currentId || ''), hidden: parsed.hidden === true, position: position };
     } catch (error) {
-      return { currentId: '', hidden: false };
+      return { currentId: '', hidden: false, position: null };
     }
   }
 
   function savePrefs() {
-    try { localStorage.setItem(PREF_KEY, JSON.stringify({ currentId: prefs.currentId, hidden: prefs.hidden })); } catch (error) { }
+    try { localStorage.setItem(PREF_KEY, JSON.stringify({ currentId: prefs.currentId, hidden: prefs.hidden, position: prefs.position || null })); } catch (error) { }
   }
 
   function toast(message) {
@@ -544,6 +551,7 @@ var temporaryTimer = 0;
     sprite.classList.toggle('pixelated', currentRecord.manifest.pixelated === true);
     if (name) name.textContent = currentRecord.manifest.displayName;
     root.hidden = prefs.hidden;
+    applyStudyPetPosition();
     root.setAttribute('aria-label', currentRecord.manifest.displayName + '\uff0c\u4f34\u5b66\u5ba0\u7269');
     animation.name = '';
     animation.frame = 0;
@@ -716,6 +724,108 @@ var temporaryTimer = 0;
     evaluateState(false);
   }
 
+  function applyStudyPetPosition() {
+    var root = document.getElementById('study-pet');
+    if (!root) return;
+    if (!prefs.position) {
+      root.style.removeProperty('left');
+      root.style.removeProperty('top');
+      root.style.removeProperty('bottom');
+      return;
+    }
+    var rect = root.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    var vw = window.innerWidth || rect.width || 1;
+    var vh = window.innerHeight || rect.height || 1;
+    var maxX = Math.max(0, vw - rect.width);
+    var maxY = Math.max(0, vh - rect.height);
+    root.style.left = Math.round(prefs.position.x * maxX) + 'px';
+    root.style.top = Math.round(prefs.position.y * maxY) + 'px';
+    root.style.bottom = 'auto';
+  }
+
+  function initStudyPetDrag(stage) {
+    var root = document.getElementById('study-pet');
+    if (!stage || !root) return;
+    var dragging = false;
+    var moved = false;
+    var pointerId = -1;
+    var startX = 0;
+    var startY = 0;
+    var startLeft = 0;
+    var startTop = 0;
+    var startWidth = 0;
+    var startHeight = 0;
+    var suppressClick = false;
+    stage.addEventListener('pointerdown', function (event) {
+      if (!currentRecord || event.button !== 0) return;
+      var rect = root.getBoundingClientRect();
+      if (!rect.width || !rect.height) return;
+      dragging = true;
+      moved = false;
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      startLeft = rect.left;
+      startTop = rect.top;
+      startWidth = rect.width;
+      startHeight = rect.height;
+      try { stage.setPointerCapture(event.pointerId); } catch (error) { }
+    });
+    stage.addEventListener('pointermove', function (event) {
+      if (!dragging || event.pointerId !== pointerId) return;
+      var dx = event.clientX - startX;
+      var dy = event.clientY - startY;
+      if (!moved) {
+        if (Math.abs(dx) < 4 && Math.abs(dy) < 4) return;
+        moved = true;
+        suppressClick = true;
+        root.classList.add('study-pet-dragging');
+        temporaryState('jumping', 2147483647);
+      }
+      var vw = window.innerWidth || 1;
+      var vh = window.innerHeight || 1;
+      var left = Math.max(0, Math.min(startLeft + dx, vw - startWidth));
+      var top = Math.max(0, Math.min(startTop + dy, vh - startHeight));
+      root.style.left = left + 'px';
+      root.style.top = top + 'px';
+      root.style.bottom = 'auto';
+    });
+    function finish(event, cancelled) {
+      if (!dragging || (event && event.pointerId !== pointerId)) return;
+      dragging = false;
+      try { stage.releasePointerCapture(pointerId); } catch (error) { }
+      root.classList.remove('study-pet-dragging');
+      if (!moved) return;
+      temporaryState('jumping', 620);
+      if (cancelled) {
+        applyStudyPetPosition();
+      } else {
+        var rect = root.getBoundingClientRect();
+        var vw = window.innerWidth || 1;
+        var vh = window.innerHeight || 1;
+        prefs.position = {
+          x: Math.max(0, Math.min(1, rect.left / Math.max(1, vw - rect.width))),
+          y: Math.max(0, Math.min(1, rect.top / Math.max(1, vh - rect.height)))
+        };
+        savePrefs();
+      }
+      setTimeout(function () { suppressClick = false; }, 0);
+    }
+    stage.addEventListener('pointerup', function (event) { finish(event, false); });
+    stage.addEventListener('pointercancel', function (event) { finish(event, true); });
+    // 松手后的 click 不再触发宠物互动，避免拖完多跳一下
+    stage.addEventListener('click', function (event) {
+      if (suppressClick) {
+        suppressClick = false;
+        event.stopImmediatePropagation();
+      }
+    }, true);
+    window.addEventListener('resize', function () {
+      if (!dragging) applyStudyPetPosition();
+    });
+  }
+
   function bind() {
     var select = document.getElementById('study-pet-select');
     var filesInput = document.getElementById('study-pet-files-input');
@@ -733,6 +843,7 @@ var temporaryTimer = 0;
     if (toggle) toggle.addEventListener('click', toggleHidden);
     if (remove) remove.addEventListener('click', deleteCurrentPet);
     if (stage) stage.addEventListener('click', handlePetClick);
+    if (stage) initStudyPetDrag(stage);
     window.addEventListener('mineradio:planner-change', handlePlannerChange);
     window.addEventListener('focus', function () { readPlannerState(); evaluateState(true); });
     document.addEventListener('visibilitychange', function () {

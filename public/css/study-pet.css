@@ -171,10 +171,22 @@
   border: 0;
   outline: none;
   background: transparent;
-  cursor: pointer;
+  cursor: grab;
   pointer-events: auto;
+  touch-action: none;
   filter: drop-shadow(0 13px 15px rgba(0, 0, 0, .28));
   transition: transform .18s ease, filter .18s ease;
+}
+
+#study-pet.study-pet-dragging {
+  transition: none;
+  opacity: 1;
+}
+
+#study-pet.study-pet-dragging #study-pet-stage {
+  cursor: grabbing;
+  transform: none;
+  filter: drop-shadow(0 20px 22px rgba(0, 0, 0, .4));
 }
 
 #study-pet-stage:hover,
